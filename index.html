@@ -1,17 +1,46 @@
-DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>StitchLab - مختبر الكروشيه</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; background-color: #f4f4f4; }
-        h1 { color: #333; }
-        p { color: #666; }
-    </style>
-</head>
-<body>
-    <h1>مرحباً بكِ في StitchLab! 🧶</h1>
-    <p>هذا هو موقعي الأول، وقد نجح النشر بنجاح!</p>
-</body>
-</html>
+Hello! Thank you for the great work yesterday in setting up the Replit environment. Today I am ready to replace all the stub files with my original source code to make StitchLab fully functional. Please replace the current stubs with these implementations:
+1. Supabase Environment Variables:
+VITE_SUPABASE_URL =
+ [https://pahuronnbaionnnzzxkp.supabase.co/rest/v1/]
+VITE_SUPABASE_ANON_KEY = [sb_publishable_k5Wl29iIVjC2uxG_-Y2z4A_DXrqgHXT]
+2. Learning Timer Implementation (@lib/timer):
+import { useCallback, useEffect, useState } from "react";
 
+const TIMER_KEY = "stitchlab.timer.v2";
+const REWARDS_KEY = "stitchlab.rewards.v1";
+
+const INITIAL_SECONDS = 45 * 60;
+const REWARD_SECONDS = 15 * 60;
+const MAX_REWARDS_PER_DAY = 3;
+export const WARNING_THRESHOLD_SECONDS = 5 * 60;
+
+type TimerState = {
+  /** Day this timer belongs to (YYYY-MM-DD). */
+  day: string;
+  /** Absolute timestamp (ms) when timer would hit 0 if running. */
+  endsAt: number;
+};
+
+type RewardsState = {
+  day: string;
+  count: number;
+};
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Milliseconds until the next local midnight (= start of "tomorrow"). */
+function msUntilTomorrow(): number {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  return tomorrow.getTime() - now.getTime();
+}
+
+function freshTimer(): TimerState {
+  return { day: todayKey(), endsAt: Date.now() + INITIAL_SECONDS * 1000 };
+}
+
+function loadTimer(): TimerState {
